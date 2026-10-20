@@ -9,11 +9,11 @@ class ConversationAgent:
         load_dotenv()
         self.groq_client = Groq(api_key=os.environ["GROQ_KEY"])
         self.conversation_history = [
-                {
-                    "role": "system",
-                    "content": read_file(file_path="./context.txt")
-                }
-            ]
+            {
+                "role": "system",
+                "content": self.read_file(file_path="./context.txt")
+            }
+        ]
 
 
     @staticmethod
@@ -32,7 +32,6 @@ class ConversationAgent:
 
 
     def ask_llm(self, question):
-
         self.update_conversation_history(role="user", content=question)
 
         response = self.groq_client.chat.completions.create(
@@ -41,39 +40,13 @@ class ConversationAgent:
             include_reasoning=False,
         ).choices[0].message.content
 
-
         self.update_conversation_history(role="assistant", content=response)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return response
 
 
 if __name__ == "__main__":
     question = input("Pose ta question :\n")
-    response = ask_llm(question)
+    agent = ConversationAgent()
+    response = agent.ask_llm(question)
     print("\n")
     print(response)
